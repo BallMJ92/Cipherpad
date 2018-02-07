@@ -5,13 +5,16 @@ from time import gmtime, strftime
 
 class messenger:
 
+    # Setting current directory path to work from
+    os.chdir("//degas/home/Py/K/e/y/")
+
     def currentTime(self):
         dateTime = strftime("%d-%m-%Y %H:%M:%S", gmtime())
         return dateTime
 
     def addressBook(self):
         # Dictionary to hold IP addresses and corresponding users
-        directory = {'IP-ADDRESS': 'USER-ONE: ', 'IP-ADDRESS': 'USER-TWO: '}
+        directory = {'IP': 'USER: ', 'IP': 'USER: '}
         return directory
 
     def generateRSAKeys(self, keyLength):
@@ -21,14 +24,20 @@ class messenger:
         publicKey = public.exportKey()
 
         # Writing Public Key to file
-        with open('pubkey.der', 'wb') as puKeyFile:
-            puKeyFile.write(publicKey)
-        puKeyFile.close()
+        if os.path.isfile("pubkey.der") == True:
+            pass
+        else:
+            with open('pubkey.der', 'wb') as puKeyFile:
+                puKeyFile.write(publicKey)
+            puKeyFile.close()
 
         # Writing Private Key to file
-        with open('privkey.der', 'wb') as prKeyFile:
-            prKeyFile.write(privateKey)
-        prKeyFile.close()
+        if os.path.isfile("privkey.der") == True:
+            pass
+        else:
+            with open('privkey.der', 'wb') as prKeyFile:
+                prKeyFile.write(privateKey)
+            prKeyFile.close()
 
     def rsaPublicEncrypt(self, data):
         # Importing and reading Public Key from file and assigning value to key variable
