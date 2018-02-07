@@ -9,12 +9,17 @@ class messenger:
         dateTime = strftime("%d-%m-%Y %H:%M:%S", gmtime())
         return dateTime
 
+    def addressBook(self):
+        # Dictionary to hold IP addresses and corresponding users
+        directory = {'172.19.2.1': 'Matt: '}
+        return directory
+
     def generateRSAKeys(self, keyLength):
         private = RSA.generate(keyLength)
         public = private.publickey()
         privateKey = private.exportKey()
         publicKey = public.exportKey()
-        
+
         # Writing Public Key to file
         with open('pubkey.der', 'wb') as puKeyFile:
             puKeyFile.write(publicKey)
@@ -29,10 +34,10 @@ class messenger:
         # Importing and reading Public Key from file and assigning value to key variable
         publicKey = RSA.importKey(open('pubkey.der').read())
         cipher = PKCS1_OAEP.new(publicKey)
-        
+
         # Encrypting plaintext data using Public Key
         self.ciphertext = cipher.encrypt(data)
-        
+
         # Returning Cipher-text
         return self.ciphertext
 
@@ -40,7 +45,7 @@ class messenger:
         # Importing and reading Private Key from file and assigning value to key variable
         privateKey = RSA.importKey(open('privkey.der').read())
         cipher = PKCS1_OAEP.new(privateKey)
-        
+
         # Decrypting cipher-text and assigning plaintext to message variable
         message = cipher.decrypt(ciphertext)
         return message
@@ -49,7 +54,7 @@ class messenger:
         # Defining IP address and Port to send cipher-text to
         IP = '172.19.2.1'
         PORT = 5001
-        
+
         # Opening port and binding in order to send cipher-text
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((IP, PORT))
@@ -61,17 +66,32 @@ class messenger:
 
         # Defining max data length
         data, addr = self.sock.recvfrom(64024)
+
+        # Variable to hold username corresponding to IP address in the addressbook
+        user = ""
+        
+        # Importing user addressBook
+        directory = self.addressBook()
+
+        # Assigning username to user variable if corresponding IP address is in data received in addr variable
+        for key, value in directory.items():
+            if key in addr:
+                user = value
+            else:
+                user = "Unknown User: "
+
+        # variable to capture ciphertext value from rsaPublicEncrypt function to show proof of concept (POC)
         cipher = self.ciphertext
 
         # Decrypting received ciphertext using rsaPrivateDecrypt function
         plain = self.rsaPrivateDecrypt(data)
 
-        # Printing current time along with plaintext decrypted from ciphertext
-        print(self.currentTime(), plain.decode("utf-8"))
+        # Printing current time along with plaintext decrypted from ciphertext. Add cipher variable to print statement for RSA encryption POC
+        print(self.currentTime(), user, plain.decode("utf-8"))
 
     def main(self):
         # Variable for RSA key length to be used in session
-        keyLength = self.generateRSAKeys(1024)
+        keyLength = self.generateRSAKeys(2048)
         name = "Matt: "
 
         # Block for active session
@@ -92,3 +112,4 @@ class messenger:
 if __name__ == '__main__':
    message = messenger()
    message.main()
+
