@@ -69,7 +69,7 @@ class messenger:
 
         # Variable to hold username corresponding to IP address in the addressbook
         user = ""
-        
+
         # Importing user addressBook
         directory = self.addressBook()
 
@@ -94,7 +94,7 @@ class messenger:
         keyLength = self.generateRSAKeys(2048)
         name = "Matt: "
 
-        # Block for active session
+        # Code block for active session
         while True:
             print(self.currentTime(), end='')
             inputMessage = (input(" - ")).encode()
