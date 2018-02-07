@@ -1,64 +1,94 @@
-from Crypto.Cipher import AES
-from Crypto import Random
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.PublicKey import RSA
 import socket
 from time import gmtime, strftime
-import time
 
 class messenger:
-
-    encryptionKey = ""
-    decryptionKey = ""
 
     def currentTime(self):
         dateTime = strftime("%d-%m-%Y %H:%M:%S", gmtime())
         return dateTime
 
-    def p(self, s):
-        return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
-    
-    # Needs work
-    def encrypt(self, message, key_size=256):
-        key = b'\xbf\xc0\x85)\x10nc\x94\x02)j\xdf\xcb\xc4\x94\x9d(\x9e[EX\xc8\xd5\xbfI{\xa2$\x05(\xd5\x18'
-        message = self.p(message)
-        iv = Random.new().read(AES.block_size)
-        cipher = AES.new(key, AES.MODE_CBC, iv)
-        return iv + cipher.encrypt(message)
+    def generateRSAKeys(self, keyLength):
+        private = RSA.generate(keyLength)
+        public = private.publickey()
+        privateKey = private.exportKey()
+        publicKey = public.exportKey()
+        
+        # Writing Public Key to file
+        with open('pubkey.der', 'wb') as puKeyFile:
+            puKeyFile.write(publicKey)
+        puKeyFile.close()
 
-    # Needs work
-    def decrypt(self, ciphertext):
-        key = b'\xbf\xc0\x85)\x10nc\x94\x02)j\xdf\xcb\xc4\x94\x9d(\x9e[EX\xc8\xd5\xbfI{\xa2$\x05(\xd5\x18'
-        iv = ciphertext[:AES.block_size]
-        cipher = AES.new(key, AES.MODE_CBC, iv)
-        plaintext = cipher.decrypt(ciphertext[AES.block_size:])
-        return plaintext.rstrip(b"\0")
+        # Writing Private Key to file
+        with open('privkey.der', 'wb') as prKeyFile:
+            prKeyFile.write(privateKey)
+        prKeyFile.close()
+
+    def rsaPublicEncrypt(self, data):
+        # Importing and reading Public Key from file and assigning value to key variable
+        publicKey = RSA.importKey(open('pubkey.der').read())
+        cipher = PKCS1_OAEP.new(publicKey)
+        
+        # Encrypting plaintext data using Public Key
+        self.ciphertext = cipher.encrypt(data)
+        
+        # Returning Cipher-text
+        return self.ciphertext
+
+    def rsaPrivateDecrypt(self, ciphertext):
+        # Importing and reading Private Key from file and assigning value to key variable
+        privateKey = RSA.importKey(open('privkey.der').read())
+        cipher = PKCS1_OAEP.new(privateKey)
+        
+        # Decrypting cipher-text and assigning plaintext to message variable
+        message = cipher.decrypt(ciphertext)
+        return message
 
     def portSender(self, message):
+        # Defining IP address and Port to send cipher-text to
         IP = '172.19.2.1'
         PORT = 5001
+        
+        # Opening port and binding in order to send cipher-text
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((IP, PORT))
-        self.sock.sendto(message.encode(), (IP, PORT))
+        self.sock.sendto(message, (IP, PORT))
 
     def portListen(self):
         IP = ''
         PORT = 5001
-        data, self.addr = self.sock.recvfrom(64024)
-        plain = self.decrypt(data.decode())
-        print(self.currentTime(), plain)
 
-    # Needs work
+        # Defining max data length
+        data, addr = self.sock.recvfrom(64024)
+        cipher = self.ciphertext
+
+        # Decrypting received ciphertext using rsaPrivateDecrypt function
+        plain = self.rsaPrivateDecrypt(data)
+
+        # Printing current time along with plaintext decrypted from ciphertext
+        print(self.currentTime(), plain.decode("utf-8"))
+
     def main(self):
+        # Variable for RSA key length to be used in session
+        keyLength = self.generateRSAKeys(1024)
         name = "Matt: "
 
+        # Block for active session
         while True:
             print(self.currentTime(), end='')
-            text = (str(input(" - ")))
-            m = text.encode('utf-8')
-            self.portSender(name+str(self.encrypt(m)))
+            inputMessage = (input(" - ")).encode()
+
+            # Turning input into bytes for encryption
+            byteString = (b""+inputMessage)
+
+            # Encrypting text input and sending it to IP address
+            self.portSender(self.rsaPublicEncrypt(byteString))
+
+            # Listening on port and printing decoded message received
             self.portListen()
 
 
 if __name__ == '__main__':
    message = messenger()
    message.main()
-
