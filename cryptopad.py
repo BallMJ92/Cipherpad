@@ -1,6 +1,6 @@
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
-import socket
+import socket, os
 from time import gmtime, strftime
 
 class messenger:
@@ -11,7 +11,7 @@ class messenger:
 
     def addressBook(self):
         # Dictionary to hold IP addresses and corresponding users
-        directory = {'172.19.2.1': 'Matt: ', '172.19.2.5': 'The Boss: '}
+        directory = {'IP-ADDRESS': 'USER-ONE: ', 'IP-ADDRESS': 'USER-TWO: '}
         return directory
 
     def generateRSAKeys(self, keyLength):
