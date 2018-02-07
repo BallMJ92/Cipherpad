@@ -11,7 +11,7 @@ class messenger:
 
     def addressBook(self):
         # Dictionary to hold IP addresses and corresponding users
-        directory = {'172.19.2.1': 'Matt: '}
+        directory = {'172.19.2.1': 'Matt: ', '172.19.2.5': 'The Boss: '}
         return directory
 
     def generateRSAKeys(self, keyLength):
@@ -74,10 +74,12 @@ class messenger:
         directory = self.addressBook()
 
         # Assigning username to user variable if corresponding IP address is in data received in addr variable
+        # addr[0] == IP, addr[1] == PORT
         for key, value in directory.items():
-            if key in addr:
-                user = value
-            else:
+            try:
+                if key == addr[0]:
+                    user = value
+            except Exception as e:
                 user = "Unknown User: "
 
         # variable to capture ciphertext value from rsaPublicEncrypt function to show proof of concept (POC)
@@ -92,7 +94,6 @@ class messenger:
     def main(self):
         # Variable for RSA key length to be used in session
         keyLength = self.generateRSAKeys(2048)
-        name = "Matt: "
 
         # Code block for active session
         while True:
