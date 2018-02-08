@@ -8,6 +8,25 @@ class messenger:
     # Setting current directory path to work from
     os.chdir("//degas/home/Py/K/e/y/")
 
+    def timeStamp(self):
+        # Creates a time stamp of session for program to generate new keys on next session
+        with open("lastSession.txt", "w") as ls:
+            ls.write(self.currentTime())
+        ls.close()
+
+    def timeStampVerification(self):
+        previousSession = str()
+
+        with open("lastSession.txt", "r") as ls:
+            for i in ls:
+                previousSession += i
+        ls.close()
+
+        return previousSession
+
+    def keyFileModificationTime(self, filename):
+        return strftime("%d-%m-%Y %H:%M:%S", gmtime(os.path.getmtime(filename)))
+
     def currentTime(self):
         dateTime = strftime("%d-%m-%Y %H:%M:%S", gmtime())
         return dateTime
@@ -25,6 +44,12 @@ class messenger:
 
         # Writing Public Key to file
         if os.path.isfile("pubkey.der") == True:
+            if self.timeStampVerification() != self.currentTime():
+                with open('pubkey.der', 'wb') as puKeyFile:
+                    puKeyFile.write(publicKey)
+                puKeyFile.close()
+            else:
+                pass
             pass
         else:
             with open('pubkey.der', 'wb') as puKeyFile:
@@ -33,11 +58,21 @@ class messenger:
 
         # Writing Private Key to file
         if os.path.isfile("privkey.der") == True:
+            # Checking time stamp of previous session. If time stamp is different from current time create new keys
+            if self.timeStampVerification() != self.currentTime():
+                with open('privkey.der', 'wb') as prKeyFile:
+                    prKeyFile.write(privateKey)
+                    prKeyFile.close()
+            else:
+                pass
             pass
         else:
             with open('privkey.der', 'wb') as prKeyFile:
                 prKeyFile.write(privateKey)
             prKeyFile.close()
+
+        # Making a time stamp for this session of key generation
+        self.timeStamp()
 
     def rsaPublicEncrypt(self, data):
         # Importing and reading Public Key from file and assigning value to key variable
@@ -106,6 +141,7 @@ class messenger:
 
         # Code block for active session
         while True:
+
             print(self.currentTime(), end='')
             inputMessage = (input(" - ")).encode()
 
