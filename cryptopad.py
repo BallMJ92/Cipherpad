@@ -1,6 +1,6 @@
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
-import socket, os
+import socket, os, sys
 from time import gmtime, strftime
 
 class messenger:
@@ -8,15 +8,41 @@ class messenger:
     # Setting current directory path to work from
     os.chdir("//degas/home/Py/K/e/y/")
 
+    def commands(self, com):
+
+        bool = False
+        if com == "help()":
+            bool = True
+            print("-COMMANDS:\n"
+                  "-exit()\n"
+                  "v - pubkey: Prints out public key being used in session for verification\n")
+        elif com == "exit()":
+            sys.exit()
+        elif com == "v - pubkey" or com == "v-pubkey":
+            bool = True
+            with open('pubkey.der', 'r') as puKeyFile:
+                for i in puKeyFile:
+                    print(i)
+            puKeyFile.close()
+        elif com == "v - privkey" or com == "v-privkey":
+            bool = True
+            with open('privkey.der', 'r') as prKeyFile:
+                for i in prKeyFile:
+                    print(i)
+                prKeyFile.close()
+
+        return bool
+
     def timeStamp(self):
         # Creates a time stamp of session for program to generate new keys on next session
         with open("lastSession.txt", "w") as ls:
             ls.write(self.currentTime())
+            #ls.write("Initiated by: ")
         ls.close()
 
     def timeStampVerification(self):
+        # Reading time stamp file
         previousSession = str()
-
         with open("lastSession.txt", "r") as ls:
             for i in ls:
                 previousSession += i
@@ -33,7 +59,7 @@ class messenger:
 
     def addressBook(self):
         # Dictionary to hold IP addresses and corresponding users
-        directory = {'IP': 'USER: ', 'IP': 'USER: '}
+        directory = {'172.19.2.1': 'Matt: ', '172.19.2.5': 'The Boss: '}
         return directory
 
     def generateRSAKeys(self, keyLength):
@@ -44,7 +70,9 @@ class messenger:
 
         # Writing Public Key to file
         if os.path.isfile("pubkey.der") == True:
+            # Checking time stamp of last session against current session
             if self.timeStampVerification() != self.currentTime():
+                # Generate new public key if time is different between previous and current session
                 with open('pubkey.der', 'wb') as puKeyFile:
                     puKeyFile.write(publicKey)
                 puKeyFile.close()
@@ -141,11 +169,16 @@ class messenger:
 
         # Code block for active session
         while True:
-
+            # Formatting messenger to display time for each message sent and received
             print(self.currentTime(), end='')
             inputMessage = (input(" - ")).encode()
 
-            # Turning input into bytes for encryption
+            """detectCommand = inputMessage.decode()
+            command = self.commands(detectCommand)
+            if command == False:
+                pass"""
+
+            # Encoding message input into bytes for encryption
             byteString = (b""+inputMessage)
 
             # Encrypting text input and sending it to IP address
