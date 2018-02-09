@@ -8,4 +8,4 @@ Step 1: Make sure that all recipients along with yourself are hardcoded into the
 
 Step 2: Run **Cipherpad** py file on your machine
 
-<sup>1</sup> A WLAN implementation is currently being developed. For now, **Cipherpad** works for machines on a networked environment where all machines have physical access to the public RSA keys (see TODO for more information).
+<sup>1</sup> A WLAN implementation is currently being developed. For now, **Cipherpad** works only on machines within a networked environment whereby all machines have physical access to the public RSA keys (see TODO for more information).
