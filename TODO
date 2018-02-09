@@ -1,0 +1,8 @@
+- Create a fork WLAN implementation whereby all individual session members dont have physical access to the public keys.
+ Methods to achieve this:
+ 1. Send obfuscated Public key from session owner to session members. 
+ 2. Implement protocol to verify successful reciept of key over transparent network
+ 
+ - Develop and add in-built commands for users to control and manipulate program (to a certain extent) without breaking any trust 
+ relationship.
+ 
