@@ -59,7 +59,7 @@ class messenger:
 
     def addressBook(self):
         # Dictionary to hold IP addresses and corresponding users
-        directory = {'172.19.2.1': 'Matt: ', '172.19.2.5': 'The Boss: '}
+        directory = {'IP ADDRESS': 'USER 1: ', 'IP ADDRESS': 'USER 2: '}
         return directory
 
     def generateRSAKeys(self, keyLength):
