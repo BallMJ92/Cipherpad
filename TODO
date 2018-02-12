@@ -3,6 +3,6 @@
  1. Send obfuscated Public key from session owner to session members. 
  2. Implement protocol to verify successful receipt of key over transparent network
  
- - Develop and add in-built commands for users to control and manipulate program (to a certain extent) without breaking any trust 
+ - Develop and add in-built commands for users to control and manipulate program (to a certain extent) without breaking trust 
  relationship.
  
