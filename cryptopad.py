@@ -1,5 +1,8 @@
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
+from colorama import init
+from termcolor import cprint
+from pyfiglet import figlet_format
 import socket, os, sys
 from time import gmtime, strftime
 
@@ -8,8 +11,10 @@ class messenger:
     # Setting current directory path to work from
     os.chdir("//degas/home/Py/K/e/y/")
 
+    def logo(self):
+        init(strip=not sys.stdout.isatty())
+        cprint(figlet_format("cipherpad", font="small"))
     def commands(self, com):
-
         bool = False
         if com == "help()":
             bool = True
@@ -36,7 +41,7 @@ class messenger:
     def timeStamp(self):
         # Creates a time stamp of session for program to generate new keys on next session
         with open("lastSession.txt", "w") as ls:
-            ls.write(self.currentTime())
+            ls.write("m"+self.currentTime())
             #ls.write("Initiated by: ")
         ls.close()
 
@@ -59,8 +64,8 @@ class messenger:
 
     def addressBook(self):
         # Dictionary to hold IP addresses and corresponding users
-        directory = {'IP ADDRESS': 'USER 1: ', 'IP ADDRESS': 'USER 2: '}
-        return directory
+        self.directory = {'172.19.2.1': 'Matt: ', '172.19.2.5': 'The Boss: '}
+        return self.directory
 
     def generateRSAKeys(self, keyLength):
         private = RSA.generate(keyLength)
@@ -87,7 +92,9 @@ class messenger:
         # Writing Private Key to file
         if os.path.isfile("privkey.der") == True:
             # Checking time stamp of previous session. If time stamp is different from current time create new keys
-            if self.timeStampVerification() != self.currentTime():
+            if self.timeStampVerification()[1:] != self.currentTime():
+                if self.timeStampVerification()[0] == "a":
+                    pass
                 with open('privkey.der', 'wb') as prKeyFile:
                     prKeyFile.write(privateKey)
                     prKeyFile.close()
@@ -147,11 +154,11 @@ class messenger:
 
         # Assigning username to user variable if corresponding IP address is in data received in addr variable
         # addr[0] == IP, addr[1] == PORT
-        for key, value in directory.items():
+        for key, value in self.directory.items():
             try:
                 if key == addr[0]:
                     user = value
-            except Exception as e:
+            except Exception:
                 user = "Unknown User: "
 
         # variable to capture ciphertext value from rsaPublicEncrypt function to show proof of concept (POC)
@@ -164,6 +171,14 @@ class messenger:
         print(self.currentTime(), user, plain.decode("utf-8"))
 
     def main(self):
+        self.logo()
+        """validation = input("Please enter IP address for validation: ")
+        for key, value in self.addressBook().items():
+            try:
+                if key == validation:
+                    print("validated")
+            except Exception as e:
+                sys.exit()"""
         # Variable for RSA key length to be used in session
         keyLength = self.generateRSAKeys(2048)
 
