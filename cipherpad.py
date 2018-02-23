@@ -173,6 +173,7 @@ class messenger:
 
     def main(self):
         self.logo()
+        
         """validation = input("Please enter IP address for validation: ")
         for key, value in self.addressBook().items():
             try:
