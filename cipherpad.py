@@ -14,6 +14,7 @@ class messenger:
     def logo(self):
         init(strip=not sys.stdout.isatty())
         cprint(figlet_format("cipherpad", font="small"))
+        
     def commands(self, com):
         bool = False
         if com == "help()":
