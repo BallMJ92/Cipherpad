@@ -9,7 +9,7 @@ from time import gmtime, strftime
 class messenger:
 
     # Setting current directory path to work from
-    os.chdir("//degas/home/Py/K/e/y/")
+    os.chdir("")
 
     def logo(self):
         init(strip=not sys.stdout.isatty())
@@ -64,7 +64,7 @@ class messenger:
 
     def addressBook(self):
         # Dictionary to hold IP addresses and corresponding users
-        self.directory = {'172.19.2.1': 'Matt: ', '172.19.2.5': 'The Boss: '}
+        self.directory = {'172.19.2.1': 'UserOne: ', '172.19.2.5': 'UserTwo: '}
         return self.directory
 
     def generateRSAKeys(self, keyLength):
