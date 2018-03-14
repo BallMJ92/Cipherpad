@@ -5,16 +5,17 @@ from termcolor import cprint
 from pyfiglet import figlet_format
 import socket, os, sys
 from time import gmtime, strftime
+import base64
 
-class messenger:
+class NetworkSender:
 
     # Setting current directory path to work from
-    os.chdir("")
+    os.chdir("//degas/home/Py/K/e/y/")
 
     def logo(self):
         init(strip=not sys.stdout.isatty())
         cprint(figlet_format("cipherpad", font="small"))
-        
+
     def commands(self, com):
         bool = False
         if com == "help()":
@@ -65,8 +66,22 @@ class messenger:
 
     def addressBook(self):
         # Dictionary to hold IP addresses and corresponding users
-        self.directory = {'172.19.2.1': 'UserOne: ', '172.19.2.5': 'UserTwo: '}
+        self.directory = {'172.19.2.1': 'Matt: ', '172.19.2.5': 'The Boss: '}
+
         return self.directory
+
+    def prelimAuthentication(self):
+        self.usernames = ["JVQXI5A=", "IFRGI2I="]
+        validation = input("Please enter username for validation: ")
+
+        valOne, valTwo = base64.b32decode(self.usernames[0]), base64.b32decode(self.usernames[1])
+        outValOne, outValTwo = str(valOne, "utf-8"), str(valTwo, "utf-8")
+
+        if outValOne == validation or outValTwo == validation:
+            print("validated")
+        else:
+            sys.exit()
+
 
     def generateRSAKeys(self, keyLength):
         private = RSA.generate(keyLength)
@@ -136,13 +151,15 @@ class messenger:
         PORT = 5001
 
         # Opening port and binding in order to send cipher-text
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind((IP, PORT))
-        self.sock.sendto(message, (IP, PORT))
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.sendto(message, (IP, PORT))
 
     def portListen(self):
         IP = ''
         PORT = 5001
+
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.bind((IP, PORT))
 
         # Defining max data length
         data, addr = self.sock.recvfrom(64024)
@@ -173,14 +190,11 @@ class messenger:
 
     def main(self):
         self.logo()
-        
-        """validation = input("Please enter IP address for validation: ")
-        for key, value in self.addressBook().items():
-            try:
-                if key == validation:
-                    print("validated")
-            except Exception as e:
-                sys.exit()"""
+
+        # Authenticating user by asking for their encrypted username
+        #self.prelimAuthentication()
+
+
         # Variable for RSA key length to be used in session
         keyLength = self.generateRSAKeys(2048)
 
@@ -206,6 +220,6 @@ class messenger:
 
 
 if __name__ == '__main__':
-   message = messenger()
+   message = NetworkSender()
    message.main()
 
