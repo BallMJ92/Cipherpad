@@ -10,7 +10,6 @@ import base64
 from socket import SOL_SOCKET, SO_REUSEADDR
 
 class NetworkSender:
-
     # Setting current directory path to work from
     os.chdir("//degas/home/Py/K/e/y/")
 
@@ -83,7 +82,6 @@ class NetworkSender:
             print("validated")
         else:
             sys.exit()
-
 
     def generateRSAKeys(self, keyLength):
         private = RSA.generate(keyLength)
