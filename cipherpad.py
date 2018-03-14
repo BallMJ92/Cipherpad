@@ -200,6 +200,7 @@ class NetworkSender:
 
         # Code block for active session
         while True:
+            # Determining session owner
             if self.timeStampVerification() != "m14-03-2018 15:51:26":
                 self.portListen()
             # Formatting messenger to display time for each message sent and received
