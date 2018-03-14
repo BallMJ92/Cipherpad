@@ -192,8 +192,8 @@ class NetworkSender:
         print(self.currentTime(), user, plain.decode("utf-8"))
 
     def main(self):
-        self.logo()
-        
+        #self.logo()
+
         # Authenticating user by asking for their encrypted username
         #self.prelimAuthentication()
 
