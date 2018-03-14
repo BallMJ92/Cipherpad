@@ -5,7 +5,9 @@ from termcolor import cprint
 from pyfiglet import figlet_format
 import socket, os, sys
 from time import gmtime, strftime
+from threading import *
 import base64
+from socket import SOL_SOCKET, SO_REUSEADDR
 
 class NetworkSender:
 
@@ -147,7 +149,7 @@ class NetworkSender:
 
     def portSender(self, message):
         # Defining IP address and Port to send cipher-text to
-        IP = '172.19.2.1'
+        IP = '10.3.5.172'
         PORT = 5001
 
         # Opening port and binding in order to send cipher-text
@@ -159,6 +161,7 @@ class NetworkSender:
         PORT = 5001
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        #self.sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         self.sock.bind((IP, PORT))
 
         # Defining max data length
@@ -179,8 +182,8 @@ class NetworkSender:
             except Exception:
                 user = "Unknown User: "
 
-        # variable to capture ciphertext value from rsaPublicEncrypt function to show proof of concept (POC)
-        cipher = self.ciphertext
+        """"# variable to capture ciphertext value from rsaPublicEncrypt function to show proof of concept (POC)
+        cipher = self.ciphertext"""
 
         # Decrypting received ciphertext using rsaPrivateDecrypt function
         plain = self.rsaPrivateDecrypt(data)
@@ -190,16 +193,17 @@ class NetworkSender:
 
     def main(self):
         self.logo()
-
+        
         # Authenticating user by asking for their encrypted username
         #self.prelimAuthentication()
-
 
         # Variable for RSA key length to be used in session
         keyLength = self.generateRSAKeys(2048)
 
         # Code block for active session
         while True:
+            if self.timeStampVerification() != "m14-03-2018 15:51:26":
+                self.portListen()
             # Formatting messenger to display time for each message sent and received
             print(self.currentTime(), end='')
             inputMessage = (input(" - ")).encode()
@@ -210,7 +214,7 @@ class NetworkSender:
                 pass"""
 
             # Encoding message input into bytes for encryption
-            byteString = (b""+inputMessage)
+            byteString = (b"" + inputMessage)
 
             # Encrypting text input and sending it to IP address
             self.portSender(self.rsaPublicEncrypt(byteString))
