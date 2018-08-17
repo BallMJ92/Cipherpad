@@ -11,7 +11,7 @@ from socket import SOL_SOCKET, SO_REUSEADDR
 
 class NetworkSender:
     # Setting current directory path to work from
-    os.chdir("//degas/home/Py/K/e/y/")
+    os.chdir("ENTER_KEY_DIRECTORY")
 
     def logo(self):
         init(strip=not sys.stdout.isatty())
@@ -67,7 +67,7 @@ class NetworkSender:
 
     def addressBook(self):
         # Dictionary to hold IP addresses and corresponding users
-        self.directory = {'172.19.2.1': 'Matt: ', '172.19.2.5': 'The Boss: '}
+        self.directory = {'ENTER_IP_ADDRESS': 'TestOne: ', 'ENTER_IP_ADDRESS': 'TestTwo: '}
 
         return self.directory
 
